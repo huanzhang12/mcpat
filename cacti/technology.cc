@@ -132,11 +132,11 @@ void init_tech_params(double technology, bool is_tag)
        exit(0);
     }
   }
-//  else if (technology < 17 && technology > 15)
-//  {
-//    tech_lo = 16;
-//    tech_hi = 16;
-//  }
+  else if (technology < 17 && technology > 15)
+  {
+    tech_lo = 16;
+    tech_hi = 16;
+  }
   else if (technology < 180 && technology > 90)
     {
       tech_lo = 180;
@@ -1584,40 +1584,44 @@ void init_tech_params(double technology, bool is_tag)
     	}
 
     if(tech == 16){
+        SENSE_AMP_D = .03e-9; // s
+        SENSE_AMP_P = 2.16e-15; // J
     	//For 2019, MPU/ASIC stagger-contacted M1 half-pitch is 16 nm (so this is 16 nm
     	//technology i.e. FEATURESIZE = 0.016). Using the DG process numbers for HP.
     	//16 nm HP
-    	vdd[0] = 0.7;
-    	Lphy[0] = 0.006;//Lphy is the physical gate-length.
-    	Lelec[0] = 0.00315;//Lelec is the electrical gate-length.
-    	t_ox[0] = 0.5e-3;//micron
-    	v_th[0] = 0.1489;//V
-    	c_ox[0] = 3.83e-14;//F/micron2 Cox_elec in MASTAR
-    	mobility_eff[0] = 476.15 * (1e-2 * 1e6 * 1e-2 * 1e6); //micron2 / Vs
-    	Vdsat[0] = 1.42e-2; //V/micron calculated in spreadsheet
-    	c_g_ideal[0] = 2.30e-16;//F/micron
+    	vdd[0] = 0.773;
+    	vdd_real[0] = g_ip->specific_hp_vdd ? g_ip->hp_Vdd : vdd[0];//TODO
+    	alpha_power_law[0]=1.2;//1.3//1.15;
+    	Lphy[0] = 0.0153;//Lphy is the physical gate-length.
+    	Lelec[0] = 0.00706;//Lelec is the electrical gate-length.
+    	t_ox[0] = 0.76e-3;//micron
+    	v_th[0] = 0.21654;//V
+    	c_ox[0] = 2.97e-14;//F/micron2 Cox_elec in MASTAR
+    	mobility_eff[0] = 563.55 * (1e-2 * 1e6 * 1e-2 * 1e6); //micron2 / Vs
+    	Vdsat[0] = 2.3974466e-2; //V/micron calculated in spreadsheet
+    	c_g_ideal[0] = 4.55e-16;//F/micron
     	c_fringe[0] = 0.06e-15;//F/micron MASTAR inputdynamic/3
     	c_junc[0] = 0;//F/micron2 MASTAR result dynamic
-    	I_on_n[0] =  2768.4e-6;//A/micron
+    	I_on_n[0] =  1684.6e-6*pow((vdd_real[0]-v_th[0])/(vdd[0]-v_th[0]),alpha_power_law[0]);//A/micron
     	I_on_p[0] = I_on_n[0] / 2;//A/micron //This value for I_on_p is not really used.
-        nmos_effective_resistance_multiplier = 1.48;//nmos_effective_resistance_multiplier  is the ratio of Ieff to Idsat where Ieff is the effective NMOS current and Idsat is the saturation current.
+        nmos_effective_resistance_multiplier = 1.45;//nmos_effective_resistance_multiplier  is the ratio of Ieff to Idsat where Ieff is the effective NMOS current and Idsat is the saturation current.
         n_to_p_eff_curr_drv_ratio[0] = 2; //Wpmos/Wnmos = 2 in 2007 MASTAR. Look in
     	//"Dynamic" tab of Device workspace.
         gmp_to_gmn_multiplier[0] = 1.38; //Just using the 32nm SOI value.
-        Rnchannelon[0] = nmos_effective_resistance_multiplier * vdd[0] / I_on_n[0];//ohm-micron
+        Rnchannelon[0] = nmos_effective_resistance_multiplier * vdd_real[0] / I_on_n[0];//ohm-micron
         Rpchannelon[0] = n_to_p_eff_curr_drv_ratio[0] * Rnchannelon[0];//ohm-micron
         long_channel_leakage_reduction[0] = 1/2.655;
-        I_off_n[0][0] = 1.52e-7/1.5*1.2*1.07;
-        I_off_n[0][10] = 1.55e-7/1.5*1.2*1.07;
-        I_off_n[0][20] = 1.59e-7/1.5*1.2*1.07;
-        I_off_n[0][30] = 1.68e-7/1.5*1.2*1.07;
-        I_off_n[0][40] = 1.90e-7/1.5*1.2*1.07;
-        I_off_n[0][50] = 2.69e-7/1.5*1.2*1.07;
-        I_off_n[0][60] = 5.32e-7/1.5*1.2*1.07;
-        I_off_n[0][70] = 1.02e-6/1.5*1.2*1.07;
-        I_off_n[0][80] = 1.62e-6/1.5*1.2*1.07;
-        I_off_n[0][90] = 2.73e-6/1.5*1.2*1.07;
-        I_off_n[0][100] = 6.1e-6/1.5*1.2*1.07;
+        I_off_n[0][0] = 9.560E-08*pow(vdd_real[0]/(vdd[0]),2); 
+        I_off_n[0][10] = 1.880E-07*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][20] = 3.690E-07*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][30] = 7.240E-07*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][40] = 1.420E-06*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][50] = 2.800E-06*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][60] = 5.500E-06*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][70] = 1.080E-05*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][80] = 2.120E-05*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][90] = 4.180E-05*pow(vdd_real[0]/(vdd[0]),2);
+        I_off_n[0][100] = 8.210E-05*pow(vdd_real[0]/(vdd[0]),2);
         //for 16nm DG HP
         I_g_on_n[0][0]  = 1.07e-9;//A/micron
         I_g_on_n[0][10] = 1.07e-9;
@@ -1630,6 +1634,54 @@ void init_tech_params(double technology, bool is_tag)
         I_g_on_n[0][80] = 1.07e-9;
         I_g_on_n[0][90] = 1.07e-9;
         I_g_on_n[0][100] = 1.07e-9;
+  
+        //16 nm LSTP DG
+    	vdd[1] = 0.778;
+        vdd_real[1] = g_ip->specific_lstp_vdd ? g_ip->lstp_Vdd : vdd[1];//TODO
+        alpha_power_law[1]=1.23;
+    	Lphy[1] = 0.0175;
+    	Lelec[1] = 0.00854;//Lelec is the electrical gate-length.
+    	t_ox[1] = 1.1e-3;//micron
+    	v_th[1] = 0.47754;//V
+    	c_ox[1] = 2.30e-14;//F/micron2
+    	mobility_eff[1] =  814.81 * (1e-2 * 1e6 * 1e-2 * 1e6); //micron2 / Vs
+    	Vdsat[1] = 1.959239e-2; //V/micron
+    	c_g_ideal[1] = 4.02e-16;//F/micron
+    	c_fringe[1] = 0.06e-15;
+    	c_junc[1] = 0;//F/micron2
+    	I_on_n[1] = 631.2e-6*pow((vdd_real[1]-v_th[1])/(vdd[1]-v_th[1]),alpha_power_law[1]);//A/micron
+    	I_on_p[1] = I_on_n[1] / 2;
+    	nmos_effective_resistance_multiplier = 1.99;
+    	n_to_p_eff_curr_drv_ratio[1] = 2;
+    	gmp_to_gmn_multiplier[1] = 0.99;
+    	Rnchannelon[1] = nmos_effective_resistance_multiplier * vdd_real[1] / I_on_n[1];//ohm-micron
+    	Rpchannelon[1] = n_to_p_eff_curr_drv_ratio[1] * Rnchannelon[1];//ohm-micron
+    	long_channel_leakage_reduction[1] = 1/1.89;
+    	I_off_n[1][0] = 2.43e-11*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][10] = 4.85e-11*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][20] = 9.68e-11*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][30] = 1.94e-10*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][40] = 3.87e-10*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][50] = 7.73e-10*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][60] = 3.55e-10*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][70] = 3.09e-9*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][80] = 6.19e-9*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][90] = 1.24e-8*pow(vdd_real[1]/(vdd[1]),1);
+    	I_off_n[1][100]= 2.48e-8*pow(vdd_real[1]/(vdd[1]),1);
+
+    	I_g_on_n[1][0]  = 4.51e-10;//A/micron
+    	I_g_on_n[1][10] = 4.51e-10;
+    	I_g_on_n[1][20] = 4.51e-10;
+    	I_g_on_n[1][30] = 4.51e-10;
+    	I_g_on_n[1][40] = 4.51e-10;
+    	I_g_on_n[1][50] = 4.51e-10;
+    	I_g_on_n[1][60] = 4.51e-10;
+    	I_g_on_n[1][70] = 4.51e-10;
+    	I_g_on_n[1][80] = 4.51e-10;
+    	I_g_on_n[1][90] = 4.51e-10;
+    	I_g_on_n[1][100] = 4.51e-10;
+
+
 
 //    	//16 nm LSTP DG
 //    	vdd[1] = 0.8;
