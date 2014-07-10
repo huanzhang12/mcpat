@@ -1709,7 +1709,7 @@ RENAMINGU::RENAMINGU(ParseXML* XML_interface, int ithCore_, InputParameter* inte
 		interface_ip.pure_cam            = false;
 		interface_ip.pure_ram            = true;
 		interface_ip.line_sz             = data;
-		interface_ip.cache_sz            = data*coredynp.num_ifreelist_entries;
+		interface_ip.cache_sz            = max(64, data*coredynp.num_ifreelist_entries);
 		interface_ip.assoc               = 1;
 		interface_ip.nbanks              = 1;
 		interface_ip.out_w               = interface_ip.line_sz*8;
@@ -3159,7 +3159,7 @@ void LoadStoreU::computeEnergy(bool is_tdp)
 	LSQ->power_t.reset();
     dcache.power_t.readOp.dynamic	+= (dcache.caches->stats_t.readAc.hit*dcache.caches->local_result.power.readOp.dynamic+
     		dcache.caches->stats_t.readAc.miss*dcache.caches->local_result.power.readOp.dynamic+ //assuming D cache is in the fast model which read tag and data together
-    		dcache.caches->stats_t.writeAc.miss*dcache.caches->local_result.tag_array2->power.readOp.dynamic+
+    		dcache.caches->stats_t.writeAc.miss*dcache.caches->local_result.tag_array2.power.readOp.dynamic+
     		dcache.caches->stats_t.writeAc.access*dcache.caches->local_result.power.writeOp.dynamic);
 
     if (cache_p==Write_back)

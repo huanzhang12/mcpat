@@ -1,0 +1,14 @@
+# object files
+*.d
+*.o
+*.pyc
+
+# emacs temp files
+*~
+
+# vi temp files
+*.swp
+
+obj_opt
+mcpat
+

@@ -8,22 +8,31 @@ ifndef NTHREADS
 endif
 
 
-LIBS = 
+LIBS =
 INCS = -lm
 
 ifeq ($(TAG),dbg)
-  DBG = -Wall 
+  DBG = -Wall
   OPT = -ggdb -g -O0 -DNTHREADS=1 -Icacti
 else
-  DBG = 
+  DBG =
   OPT = -O3 -msse2 -mfpmath=sse -DNTHREADS=$(NTHREADS) -Icacti
   #OPT = -O0 -DNTHREADS=$(NTHREADS)
 endif
 
-#CXXFLAGS = -Wall -Wno-unknown-pragmas -Winline $(DBG) $(OPT) 
-CXXFLAGS = -Wno-unknown-pragmas $(DBG) $(OPT) 
-CXX = g++ -m32
-CC  = gcc -m32
+ifeq ($(ARCH),ia32)
+  OPT += -m32
+endif
+
+ifneq ($(CACHE),)
+  OPT += -DENABLE_CACHE
+  LIBS += -ldb
+endif
+
+#CXXFLAGS = -Wall -Wno-unknown-pragmas -Winline $(DBG) $(OPT)
+CXXFLAGS = -Wno-unknown-pragmas $(DBG) $(OPT)
+CXX = g++
+CC  = gcc
 
 VPATH = cacti
 
@@ -65,7 +74,7 @@ SRCS  = \
 OBJS = $(patsubst %.cc,obj_$(TAG)/%.o,$(SRCS))
 
 all: obj_$(TAG)/$(TARGET)
-	cp -f obj_$(TAG)/$(TARGET) $(TARGET)
+	cp -f obj_$(TAG)/$(TARGET) $(TARGET)$(SUFFIX)
 
 obj_$(TAG)/$(TARGET) : $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(INCS) $(CXXFLAGS) $(LIBS) -pthread
