@@ -54,11 +54,13 @@ using namespace std;
 void print_usage(char * argv0);
 
 int socket_fd = 0;
+int pid = 1;
 struct sockaddr_un address;
 
 void close_socket()
 {
-	if (socket_fd)
+	// don't close socket if I am a child process
+	if (socket_fd && pid)
 	{
 		cout << "Closing socket...\n"; 
 		close(socket_fd);
@@ -162,67 +164,88 @@ int main(int argc,char *argv[])
 		sigemptyset(&sigIntHandler.sa_mask);
 		sigIntHandler.sa_flags = 0;
 		sigaction(SIGINT, &sigIntHandler, NULL);
+		// handle SIGCHLD and avoid zombies
+		signal(SIGCHLD, SIG_IGN);
 		
 		while((connection_fd = accept(socket_fd, (struct sockaddr *) &address, &address_length)) > -1)
 		{
-			char buffer[SOCKET_CMD_MAX_LEN];
-			
-			memset(&buffer, 0, SOCKET_CMD_MAX_LEN * sizeof(char));
-			read(connection_fd, buffer, SOCKET_CMD_MAX_LEN);
-			
-			cout << "Received: " << buffer << endl;
-			string if_socket;
-			string of_socket(buffer);
-			ofstream output_file;
-			
-			// first argument: input file name
-			if_socket = of_socket.substr(0, of_socket.find(","));
-			of_socket.erase(0, of_socket.find(",") + 1);
-			// second argument: print_level
-			plevel = atoi(of_socket.substr(0, of_socket.find(",")).c_str());
-			of_socket.erase(0, of_socket.find(",") + 1);
-			// third argument: opt_clk
-			opt_for_clk = (bool)atoi(of_socket.substr(0, of_socket.find(",")).c_str());
-			of_socket.erase(0, of_socket.find(",") + 1);
-			of_socket.erase(of_socket.find("\n") == -1 ? of_socket.length() : of_socket.find("\n"), of_socket.length());
-			// the rest string is output file name
-			cout << "Processing file "  << if_socket << ", output file is " << of_socket
-			 << " (Options: print_level = " << plevel << ", opt_for_clk = " << opt_for_clk << ")" << endl;
-			
-			//parse XML-based interface
-			ParseXML *p1= new ParseXML();
-			fb = new char [if_socket.length()+1];
-			strcpy (fb, if_socket.c_str());
-			p1->parse(fb);
-			Processor proc(p1);
-			
-			// redirect cout and run displayEnergy()
-			cout.flush();
-			ostringstream new_cout;
-			streambuf* orig_cout_rdbuf = cout.rdbuf();
-			cout.rdbuf( new_cout.rdbuf() );
-			proc.displayEnergy(2, plevel);
-			
-			// write this streambuf to file
-			output_file.open(of_socket.c_str(), ofstream::out);
-			if(output_file.is_open())
+			if ((pid = fork()) == -1)
 			{
-				output_file << new_cout.str();
-				output_file.flush();
-				output_file.close();
+				cerr << "Cannot fork\n";
+				close(connection_fd);
+				continue;
 			}
-			else
+			else if(pid > 0)
 			{
-				cerr << "Cannot write output to " << of_socket;
+				// parent process
+				close(connection_fd);
+				continue;
 			}
-			cout.rdbuf( orig_cout_rdbuf );
-			write(connection_fd, "Done.\n", 6);
-			cout << "Done." << endl;
+			else if(pid == 0)
+			{
+				// child process
+				char buffer[SOCKET_CMD_MAX_LEN];
 			
-			delete p1;
-			delete fb;
+				memset(&buffer, 0, SOCKET_CMD_MAX_LEN * sizeof(char));
+				read(connection_fd, buffer, SOCKET_CMD_MAX_LEN);
 			
-			close(connection_fd);
+				cout << "Received: " << buffer << endl;
+				string if_socket;
+				string of_socket(buffer);
+				ofstream output_file;
+			
+				// first argument: input file name
+				if_socket = of_socket.substr(0, of_socket.find(","));
+				of_socket.erase(0, of_socket.find(",") + 1);
+				// second argument: print_level
+				plevel = atoi(of_socket.substr(0, of_socket.find(",")).c_str());
+				of_socket.erase(0, of_socket.find(",") + 1);
+				// third argument: opt_clk
+				opt_for_clk = (bool)atoi(of_socket.substr(0, of_socket.find(",")).c_str());
+				of_socket.erase(0, of_socket.find(",") + 1);
+				of_socket.erase(of_socket.find("\n") == -1 ? of_socket.length() : of_socket.find("\n"), of_socket.length());
+				// the rest string is output file name
+				cout << "Processing file "  << if_socket << ", output file is " << of_socket
+				 << " (Options: print_level = " << plevel << ", opt_for_clk = " << opt_for_clk << ")" << endl;
+			
+				//parse XML-based interface
+				ParseXML *p1= new ParseXML();
+				fb = new char [if_socket.length()+1];
+				strcpy (fb, if_socket.c_str());
+				p1->parse(fb);
+				Processor proc(p1);
+			
+				// redirect cout and run displayEnergy()
+				cout.flush();
+				ostringstream new_cout;
+				streambuf* orig_cout_rdbuf = cout.rdbuf();
+				cout.rdbuf( new_cout.rdbuf() );
+				proc.displayEnergy(2, plevel);
+			
+				// write this streambuf to file
+				output_file.open(of_socket.c_str(), ofstream::out);
+				if(output_file.is_open())
+				{
+					output_file << new_cout.str();
+					output_file.flush();
+					output_file.close();
+				}
+				else
+				{
+					cerr << "Cannot write output to " << of_socket;
+				}
+				cout.rdbuf( orig_cout_rdbuf );
+				write(connection_fd, "Done.\n", 6);
+				cout << "Done." << endl;
+			
+				delete p1;
+				delete fb;
+			
+				close(connection_fd);
+				// exit child process
+				return 0;
+			}
+			
 		}
 		close_socket();
 	}
