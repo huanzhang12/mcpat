@@ -104,7 +104,12 @@ Processor::Processor(ParseXML *XML_interface)
 
   for (i = 0;i < numCore; i++)
   {
+#ifdef ENABLE_L0
+	  	  cores.push_back(new Core(XML,i, &interface_ip, &L0_ip));
+#else
 		  cores.push_back(new Core(XML,i, &interface_ip));
+#endif
+
 		  cores[i]->computeEnergy();
 		  cores[i]->computeEnergy(false);
 		  if (procdynp.homoCore){
@@ -822,6 +827,89 @@ void Processor::set_proc_param()
 	interface_ip.force_wiretype      = false;
 	interface_ip.print_detail        = 1;
 	interface_ip.add_ecc_b_          =true;
+#ifdef ENABLE_L0
+	L0_ip.data_arr_ram_cell_tech_type    	= debug?0:XML->sys.device_type;
+	L0_ip.data_arr_peri_global_tech_type 	= debug?0:XML->sys.device_type;
+	L0_ip.tag_arr_ram_cell_tech_type     	= debug?0:XML->sys.device_type;
+	L0_ip.tag_arr_peri_global_tech_type  	= debug?0:XML->sys.device_type;
+
+	L0_ip.specific_hp_vdd 					= false;
+	L0_ip.specific_lop_vdd 				 	= false;
+	L0_ip.specific_lstp_vdd 				= false;
+
+	L0_ip.specific_vcc_min 					= false;
+
+	L0_ip.ic_proj_type     		  = debug?0:XML->sys.interconnect_projection_type;
+	L0_ip.delay_wt                = 100;//Fixed number, make sure timing can be satisfied.
+	L0_ip.area_wt                 = 0;//Fixed number, This is used to exhaustive search for individual components.
+	L0_ip.dynamic_power_wt        = 100;//Fixed number, This is used to exhaustive search for individual components.
+	L0_ip.leakage_power_wt        = 0;
+	L0_ip.cycle_time_wt           = 0;
+
+	L0_ip.delay_dev               = 10000;//Fixed number, make sure timing can be satisfied.
+	L0_ip.area_dev                = 10000;//Fixed number, This is used to exhaustive search for individual components.
+	L0_ip.dynamic_power_dev       = 10000;//Fixed number, This is used to exhaustive search for individual components.
+	L0_ip.leakage_power_dev       = 10000;
+	L0_ip.cycle_time_dev          = 10000;
+
+	L0_ip.ed              		  = 2;
+	L0_ip.burst_len      		  = 1;//parameters are fixed for processor section, since memory is processed separately
+	L0_ip.int_prefetch_w 		  = 1;
+	L0_ip.page_sz_bits   		  = 0;
+	L0_ip.temp 					  = debug?360: XML->sys.temperature;
+	L0_ip.F_sz_nm         		  = debug?90:XML->sys.core_tech_node;//XML->sys.core_tech_node;
+	L0_ip.F_sz_um         		  = L0_ip.F_sz_nm / 1000;
+
+	//***********This section of code does not have real meaning, they are just to ensure all data will have initial value to prevent errors.
+	//They will be overridden  during each components initialization
+	L0_ip.cache_sz            =64;
+	L0_ip.line_sz             = 1;
+	L0_ip.assoc               = 1;
+	L0_ip.nbanks              = 1;
+	L0_ip.out_w               = L0_ip.line_sz*8;
+	L0_ip.specific_tag        = 1;
+	L0_ip.tag_w               = 64;
+	L0_ip.access_mode         = 2;
+
+	L0_ip.obj_func_dyn_energy = 0;
+	L0_ip.obj_func_dyn_power  = 0;
+	L0_ip.obj_func_leak_power = 0;
+	L0_ip.obj_func_cycle_t    = 1;
+
+	L0_ip.is_main_mem     = false;
+	L0_ip.rpters_in_htree = true ;
+	L0_ip.ver_htree_wires_over_array = 0;
+	L0_ip.broadcast_addr_din_over_ver_htrees = 0;
+
+	L0_ip.num_rw_ports        = 1;
+	L0_ip.num_rd_ports        = 0;
+	L0_ip.num_wr_ports        = 0;
+	L0_ip.num_se_rd_ports     = 0;
+	L0_ip.num_search_ports    = 1;
+	L0_ip.nuca                = 0;
+	L0_ip.nuca_bank_count     = 0;
+	L0_ip.is_cache            = true;
+	L0_ip.pure_ram            = false;
+	L0_ip.pure_cam            = false;
+	L0_ip.force_cache_config  = false;
+	L0_ip.power_gating  	  =XML->sys.power_gating;
+
+	if (XML->sys.Embedded)
+		{
+		L0_ip.wt                  =Global_30;
+		L0_ip.wire_is_mat_type = 0;
+		L0_ip.wire_os_mat_type = 0;
+		}
+	else
+		{
+		L0_ip.wt                  =Global;
+		L0_ip.wire_is_mat_type = 2;
+		L0_ip.wire_os_mat_type = 2;
+		}
+	L0_ip.force_wiretype      = false;
+	L0_ip.print_detail        = 1;
+	L0_ip.add_ecc_b_          =true;
+#endif
 }
 
 Processor::~Processor(){

@@ -32,7 +32,6 @@
 #ifndef XML_PARSE_H_
 #define XML_PARSE_H_
 
-
 //#ifdef WIN32
 //#define _CRT_SECURE_NO_DEPRECATE
 //#endif
@@ -91,6 +90,29 @@ typedef struct{
 	double prefetch_buffer_reads;
 	double prefetch_buffer_hits;
 	double conflicts;
+
+#ifdef ENABLE_L0
+	//params
+	double L0_config[20];
+	int L0_buffer_sizes[20];
+	int L0_cache_policy;//0 no write or write-though with non-write allocate;1 write-back with write-allocate
+	int L0_enabled;
+	//stats
+	double L0_total_accesses;
+	double L0_read_accesses;
+	double L0_read_misses;
+	double L0_replacements;
+	double L0_read_hits;
+	double L0_total_hits;
+	double L0_total_misses;
+	double L0_miss_buffer_access;
+	double L0_fill_buffer_accesses;
+	double L0_prefetch_buffer_accesses;
+	double L0_prefetch_buffer_writes;
+	double L0_prefetch_buffer_reads;
+	double L0_prefetch_buffer_hits;
+	double L0_conflicts;
+#endif
 } icache_systemcore;
 typedef struct{
 	//params
@@ -134,6 +156,35 @@ typedef struct{
 	double wbb_writes;
 	double wbb_reads;
 	double conflicts;
+
+#ifdef ENABLE_L0
+	//params
+	double L0_config[20];
+	int L0_buffer_sizes[20];
+	int L0_cache_policy;//0 no write or write-though with non-write allocate;1 write-back with write-allocate
+	int L0_enabled;
+	//stats
+	double L0_total_accesses;
+	double L0_read_accesses;
+	double L0_write_accesses;
+	double L0_total_hits;
+	double L0_total_misses;
+	double L0_read_hits;
+	double L0_write_hits;
+	double L0_read_misses;
+	double L0_write_misses;
+	double L0_replacements;
+	double L0_write_backs;
+	double L0_miss_buffer_access;
+	double L0_fill_buffer_accesses;
+	double L0_prefetch_buffer_accesses;
+	double L0_prefetch_buffer_writes;
+	double L0_prefetch_buffer_reads;
+	double L0_prefetch_buffer_hits;
+	double L0_wbb_writes;
+	double L0_wbb_reads;
+	double L0_conflicts;
+#endif
 } dcache_systemcore;
 typedef struct{
 	//params

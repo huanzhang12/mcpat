@@ -41,6 +41,7 @@
 #include "basic_components.h"
 #include "sharedcache.h"
 
+
 class BranchPredictor :public Component {
   public:
 
@@ -83,12 +84,60 @@ class InstFetchU :public Component {
 	inst_decoder * ID_operand;
 	inst_decoder * ID_misc;
 	bool exist;
+#ifdef ENABLE_L0
+	InstCache L0_icache;
+	InputParameter L0_ip;
+	enum Cache_policy L0_cache_p;
+	InstFetchU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_, InputParameter* L0_ip_, const CoreDynParam & dyn_p_, bool exsit=true);
 
+//	ArrayST * L0_IB;
+//	ArrayST * L0_BTB;
+//	BranchPredictor * L0_BPT;
+//	inst_decoder * L0_ID_inst;
+//	inst_decoder * L0_ID_operand;
+//	inst_decoder * L0_ID_misc;
+#else
 	InstFetchU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_,const CoreDynParam & dyn_p_, bool exsit=true);
-    void computeEnergy(bool is_tdp=true);
+#endif
+	void computeEnergy(bool is_tdp=true);
     void displayEnergy(uint32_t indent = 0,int plevel = 100, bool is_tdp=true);
 	~InstFetchU();
 };
+
+
+class LoadStoreU :public Component {
+  public:
+
+	ParseXML *XML;
+	int  ithCore;
+	InputParameter interface_ip;
+	CoreDynParam  coredynp;
+	enum Cache_policy cache_p;
+	double clockRate,executionTime;
+	double scktRatio, chip_PR_overhead, macro_PR_overhead;
+	double lsq_height;
+	DataCache dcache;
+	ArrayST * LSQ;//it is actually the store queue but for inorder processors it serves as both loadQ and StoreQ
+	ArrayST * LoadQ;
+	bool exist;
+
+#ifdef ENABLE_L0
+	enum Cache_policy L0_cache_p;
+	InputParameter L0_ip;
+	DataCache L0_dcache;
+	LoadStoreU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_, InputParameter* L0_ip_, const CoreDynParam & dyn_p_, bool exist_=true);
+	//ArrayST * LSQ;//it is actually the store queue but for inorder processors it serves as both loadQ and StoreQ
+	//ArrayST * LoadQ;
+#else
+	LoadStoreU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_,const CoreDynParam & dyn_p_, bool exist_=true);
+#endif
+
+	void computeEnergy(bool is_tdp=true);
+    void displayEnergy(uint32_t indent = 0,int plevel = 100, bool is_tdp=true);
+	~LoadStoreU();
+};
+
+
 
 
 class SchedulerU :public Component {
@@ -137,28 +186,6 @@ class RENAMINGU :public Component {
     void computeEnergy(bool is_tdp=true);
     void displayEnergy(uint32_t indent = 0,int plevel = 100, bool is_tdp=true);
 	~RENAMINGU();
-};
-
-class LoadStoreU :public Component {
-  public:
-
-	ParseXML *XML;
-	int  ithCore;
-	InputParameter interface_ip;
-	CoreDynParam  coredynp;
-	enum Cache_policy cache_p;
-	double clockRate,executionTime;
-	double scktRatio, chip_PR_overhead, macro_PR_overhead;
-	double lsq_height;
-	DataCache dcache;
-	ArrayST * LSQ;//it is actually the store queue but for inorder processors it serves as both loadQ and StoreQ
-	ArrayST * LoadQ;
-	bool exist;
-
-	LoadStoreU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_,const CoreDynParam & dyn_p_, bool exist_=true);
-    void computeEnergy(bool is_tdp=true);
-    void displayEnergy(uint32_t indent = 0,int plevel = 100, bool is_tdp=true);
-	~LoadStoreU();
 };
 
 class MemManU :public Component {
@@ -239,6 +266,9 @@ class Core :public Component {
 	ParseXML *XML;
 	int  ithCore;
 	InputParameter interface_ip;
+#ifdef ENABLE_L0
+	InputParameter L0_ip;
+#endif
 	double clockRate,executionTime;
 	double scktRatio, chip_PR_overhead, macro_PR_overhead;
 	InstFetchU * ifu;
@@ -252,7 +282,11 @@ class Core :public Component {
     CoreDynParam  coredynp;
     //full_decoder 	inst_decoder;
     //clock_network	clockNetwork;
+#ifdef ENABLE_L0
+	Core(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_, InputParameter* L0_ip_);
+#else
 	Core(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_);
+#endif
 	void set_core_param();
 	void computeEnergy(bool is_tdp=true);
 	void displayEnergy(uint32_t indent = 0,int plevel = 100, bool is_tdp=true);

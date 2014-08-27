@@ -29,6 +29,10 @@ ifneq ($(CACHE),)
   LIBS += -ldb
 endif
 
+ifneq ($(L0),)
+  OPT += -DENABLE_L0
+endif
+
 #CXXFLAGS = -Wall -Wno-unknown-pragmas -Winline $(DBG) $(OPT)
 CXXFLAGS = -Wno-unknown-pragmas $(DBG) $(OPT)
 CXX = g++

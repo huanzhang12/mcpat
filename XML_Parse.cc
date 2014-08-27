@@ -35,7 +35,6 @@
 #include <string>
 #include "XML_Parse.h"
 #include <iostream>
-
 using namespace std;
 
 void ParseXML::parse(char* filepath)
@@ -457,6 +456,51 @@ void ParseXML::parse(char* filepath)
 									m++;
 									chtmp1[0]='\0';
 								}
+#ifdef ENABLE_L0
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_config")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].icache.L0_config[m]=atof(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].icache.L0_config[m]=atof(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+									continue;
+								}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_buffer_sizes")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].icache.L0_buffer_sizes[m]=atoi(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].icache.L0_buffer_sizes[m]=atoi(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+								}
+#endif
 							}
 							itmp=xNode4.nChildNode("stat");
 							for(k=0; k<itmp; k++)
@@ -475,6 +519,24 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"prefetch_buffer_reads")==0) {sys.core[i].icache.prefetch_buffer_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"prefetch_buffer_hits")==0) {sys.core[i].icache.prefetch_buffer_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"conflicts")==0) {sys.core[i].icache.conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+#ifdef ENABLE_L0
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].icache.L0_enabled=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								cout << "icache L0_enabled= " << sys.core[i].icache.L0_enabled << endl;
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_accesses")==0) {sys.core[i].icache.L0_total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_accesses")==0) {sys.core[i].icache.L0_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_misses")==0) {sys.core[i].icache.L0_read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_replacements")==0) {sys.core[i].icache.L0_replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_hits")==0) {sys.core[i].icache.L0_read_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_hits")==0) {sys.core[i].icache.L0_total_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_misses")==0) {sys.core[i].icache.L0_total_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_miss_buffer_access")==0) {sys.core[i].icache.L0_miss_buffer_access=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_fill_buffer_accesses")==0) {sys.core[i].icache.L0_fill_buffer_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_accesses")==0) {sys.core[i].icache.L0_prefetch_buffer_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_writes")==0) {sys.core[i].icache.L0_prefetch_buffer_writes=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_reads")==0) {sys.core[i].icache.L0_prefetch_buffer_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_hits")==0) {sys.core[i].icache.L0_prefetch_buffer_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_conflicts")==0) {sys.core[i].icache.L0_conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+#endif
 							}
 						}
 						if (strcmp(xNode4.getAttribute("name"),"dtlb")==0)
@@ -548,6 +610,51 @@ void ParseXML::parse(char* filepath)
 									m++;
 									chtmp1[0]='\0';
 								}
+#ifdef ENABLE_L0
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_config")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].dcache.L0_config[m]=atof(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].dcache.L0_config[m]=atof(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+									continue;
+								}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_buffer_sizes")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].dcache.L0_buffer_sizes[m]=atoi(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].dcache.L0_buffer_sizes[m]=atoi(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+								}
+#endif
 							}
 							itmp=xNode4.nChildNode("stat");
 							for(k=0; k<itmp; k++)
@@ -572,6 +679,29 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"wbb_writes")==0) {sys.core[i].dcache.wbb_writes=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"wbb_reads")==0) {sys.core[i].dcache.wbb_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"conflicts")==0) {sys.core[i].dcache.conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+#ifdef ENABLE_L0
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].dcache.L0_enabled=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_accesses")==0) {sys.core[i].dcache.L0_total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_accesses")==0) {sys.core[i].dcache.L0_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_write_accesses")==0) {sys.core[i].dcache.L0_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_hits")==0) {sys.core[i].dcache.L0_total_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_misses")==0) {sys.core[i].dcache.L0_total_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_hits")==0) {sys.core[i].dcache.L0_read_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_write_hits")==0) {sys.core[i].dcache.L0_write_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_misses")==0) {sys.core[i].dcache.L0_read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_write_misses")==0) {sys.core[i].dcache.L0_write_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_replacements")==0) {sys.core[i].dcache.L0_replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_write_backs")==0) {sys.core[i].dcache.L0_write_backs=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_miss_buffer_access")==0) {sys.core[i].dcache.L0_miss_buffer_access=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_fill_buffer_accesses")==0) {sys.core[i].dcache.L0_fill_buffer_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_accesses")==0) {sys.core[i].dcache.L0_prefetch_buffer_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_writes")==0) {sys.core[i].dcache.L0_prefetch_buffer_writes=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_reads")==0) {sys.core[i].dcache.L0_prefetch_buffer_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_prefetch_buffer_hits")==0) {sys.core[i].dcache.L0_prefetch_buffer_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_wbb_writes")==0) {sys.core[i].dcache.L0_wbb_writes=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_wbb_reads")==0) {sys.core[i].dcache.L0_wbb_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_conflicts")==0) {sys.core[i].dcache.L0_conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+#endif
 
 							}
 						}
@@ -1672,7 +1802,8 @@ void ParseXML::initialize() //Initialize all
 		for (j=0; j<20; j++) sys.L1Directory[i].Dir_config[j]=1;
 		for (j=0; j<20; j++) sys.L1Directory[i].buffer_sizes[j]=1;
 		sys.L1Directory[i].clockrate=1;
-		sys.L1Directory[i].ports[20]=1;
+		//sys.L1Directory[i].ports[20]=1;
+		sys.L1Directory[i].ports[19]=1;
 		sys.L1Directory[i].device_type=1;
 		sys.L1Directory[i].vdd =0;
 		sys.L1Directory[i].power_gating_vcc = -1;
@@ -1688,7 +1819,8 @@ void ParseXML::initialize() //Initialize all
 		for (j=0; j<20; j++) sys.L2Directory[i].Dir_config[j]=1;
 		for (j=0; j<20; j++) sys.L2Directory[i].buffer_sizes[j]=1;
 		sys.L2Directory[i].clockrate=1;
-		sys.L2Directory[i].ports[20]=1;
+		//sys.L2Directory[i].ports[20]=1;
+		sys.L2Directory[i].ports[19]=1;
 		sys.L2Directory[i].device_type=1;
 		sys.L2Directory[i].vdd =0;
 		sys.L2Directory[i].power_gating_vcc = -1;
@@ -1807,7 +1939,8 @@ void ParseXML::initialize() //Initialize all
 		sys.NoC[i].xbar0.number_of_outputs_of_crossbars=1;
 		sys.NoC[i].xbar0.flit_bits=1;
 		sys.NoC[i].xbar0.input_buffer_entries_per_port=1;
-		sys.NoC[i].xbar0.ports_of_input_buffer[20]=1;
+//		sys.NoC[i].xbar0.ports_of_input_buffer[20]=1;
+		sys.NoC[i].xbar0.ports_of_input_buffer[19]=1;
 		sys.NoC[i].xbar0.crossbar_accesses=1;
 	}
 	//system_mem

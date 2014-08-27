@@ -61,6 +61,9 @@ class Processor : public Component
     PCIeController   * pcie;
     FlashController  * flashcontroller;
     InputParameter interface_ip;
+#ifdef ENABLE_L0
+    InputParameter L0_ip;
+#endif
     ProcParam procdynp;
     //wire	globalInterconnect;
     //clock_network globalClock;
