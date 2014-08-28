@@ -239,7 +239,7 @@
 				<!-- cache_policy;//0 no write or write-though with non-write allocate;1 write-back with write-allocate -->
 				<param name="L0_buffer_sizes" value="16, 16, 16,0"/>
 				<!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size--> 
-				<stat name="L0_enabled" value="1"/>	
+				<param name="L0_enabled" value="1"/>	
 				<stat name="L0_read_accesses" value="200000"/>
 				<stat name="L0_read_misses" value="0"/>
 				<stat name="L0_conflicts" value="0"/>		
@@ -260,7 +260,7 @@
 				<param name="L0_config" value="16384,16,4,1, 3,3, 16,1 "/>
 				<param name="L0_buffer_sizes" value="16, 16, 16, 16"/>
 				<!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size-->	
-				<stat name="L0_enabled" value="1"/>	
+				<param name="L0_enabled" value="1"/>	
 				<stat name="L0_read_accesses" value="800000"/>
 				<stat name="L0_write_accesses" value="27276"/>
 				<stat name="L0_read_misses" value="1632"/>

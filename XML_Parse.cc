@@ -500,6 +500,7 @@ void ParseXML::parse(char* filepath)
 									m++;
 									chtmp1[0]='\0';
 								}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].icache.L0_enabled=atof(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 #endif
 							}
 							itmp=xNode4.nChildNode("stat");
@@ -520,8 +521,6 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"prefetch_buffer_hits")==0) {sys.core[i].icache.prefetch_buffer_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"conflicts")==0) {sys.core[i].icache.conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 #ifdef ENABLE_L0
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].icache.L0_enabled=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								cout << "icache L0_enabled= " << sys.core[i].icache.L0_enabled << endl;
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_accesses")==0) {sys.core[i].icache.L0_total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_accesses")==0) {sys.core[i].icache.L0_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_misses")==0) {sys.core[i].icache.L0_read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
@@ -654,6 +653,7 @@ void ParseXML::parse(char* filepath)
 									m++;
 									chtmp1[0]='\0';
 								}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].dcache.L0_enabled=atof(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 #endif
 							}
 							itmp=xNode4.nChildNode("stat");
@@ -680,7 +680,6 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"wbb_reads")==0) {sys.core[i].dcache.wbb_reads=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"conflicts")==0) {sys.core[i].dcache.conflicts=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 #ifdef ENABLE_L0
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_enabled")==0) {sys.core[i].dcache.L0_enabled=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_total_accesses")==0) {sys.core[i].dcache.L0_total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_read_accesses")==0) {sys.core[i].dcache.L0_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"L0_write_accesses")==0) {sys.core[i].dcache.L0_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
