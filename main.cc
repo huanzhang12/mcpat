@@ -96,22 +96,27 @@ int main(int argc,char *argv[])
 			fb = argv[ i];
 		}
 
-		if (argv[i] == string("-print_level"))
+		else if (argv[i] == string("-print_level"))
 		{
 			i++;
 			plevel = atoi(argv[i]);
 		}
 
-		if (argv[i] == string("-opt_for_clk"))
+		else if (argv[i] == string("-opt_for_clk"))
 		{
 			i++;
 			opt_for_clk = (bool)atoi(argv[i]);
 		}
 		
-		if (argv[i] == string("-socket"))
+		else if (argv[i] == string("-socket"))
 		{
 			infile_specified = true;
 			use_socket = true;
+		}
+		
+		else if (i > 0)
+		{
+			cerr << "Warning: unrecognized argument " << argv[i] << endl;
 		}
 	}
 	if (infile_specified == false)
