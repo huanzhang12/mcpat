@@ -46,7 +46,7 @@
 #include <unistd.h>
 #include <signal.h>
 #define UNIX_PATH_MAX 108
-#define SOCKET_CMD_MAX_LEN 256
+#define SOCKET_CMD_MAX_LEN 1024
 
 
 using namespace std;
